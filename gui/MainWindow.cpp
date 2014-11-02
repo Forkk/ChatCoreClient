@@ -1,47 +1,80 @@
+#include <QCCC.h>
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "CoreConnectDialog.h"
+#include "JoinDialog.h"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
-{
-	ui->setupUi(this);
+MainWindow::MainWindow(QWidget *parent)
+        : QMainWindow(parent), ui(new Ui::MainWindow), m_bufferModel(new BufferModel()) {
+    ui->setupUi(this);
+    ui->bufferList->setModel(m_bufferModel.get());
+    connect(QCCC, SIGNAL(connectionStatus(QString)), this, SLOT(connectionStatus(QString)));
 }
 
-MainWindow::~MainWindow()
-{
-	delete ui;
+MainWindow::~MainWindow() {
+    delete ui;
 }
 
-void MainWindow::on_send_clicked()
-{
-	send(ui->message->text());
+void MainWindow::on_send_clicked() {
+    send(ui->message->text());
 }
 
-void MainWindow::on_message_returnPressed()
-{
-	send(ui->message->text());
+void MainWindow::on_message_returnPressed() {
+    send(ui->message->text());
 }
 
-void MainWindow::send(QString text)
-{
+void MainWindow::send(QString text) {
+    BufferLinePtr line(new BufferLine);
+    line->network = m_contentModel->getNetwork();
+    line->buffer = m_contentModel->getBuffer();
+    line->data = QVariantMap();
+    line->data.insert("command", "send-msg");
+    line->data.insert("network", m_contentModel->getNetwork());
+    line->data.insert("dest", m_contentModel->getBuffer());
+    line->data.insert("message", text);
+
+    QCCC->getTransport()->send(line);
 }
 
-void MainWindow::on_actionPart_Channel_triggered()
-{
+void MainWindow::on_actionPart_Channel_triggered() {
 }
 
-void MainWindow::on_actionConnect_To_Core_triggered()
-{
+void MainWindow::on_actionConnect_To_Core_triggered() {
     CoreConnectDialog dialog(this);
-    if(!dialog.exec()) {
+    if (dialog.exec()) {
         ChatCorePtr core = dialog.core();
         QString username = dialog.username();
         QString password = dialog.password();
+        m_contentModel.reset(new BufferContentModel());
+        m_bufferModel.reset(new BufferModel());
 
+        QCCC->connectToCore(core, username, password, m_contentModel, m_bufferModel);
     }
 
 }
 
-void MainWindow::on_actionJoin_Channel_triggered()
-{
+void MainWindow::on_actionJoin_Channel_triggered() {
+    JoinDialog dialog(this);
+    if (dialog.exec()) {
+        BufferLinePtr line(new BufferLine);
+        line->network = dialog.network();
+        line->buffer = dialog.channel();
+        line->data = QVariantMap();
+        line->data.insert("command", "join-chan");
+        line->data.insert("network", dialog.network());
+        line->data.insert("channel", dialog.channel());
+
+        QCCC->getTransport()->send(line);
+
+        Buffer *buf = new Buffer;
+        buf->network = new Network;
+        buf->network->name = dialog.network();
+        buf->name = dialog.channel();
+
+        m_bufferModel->add(buf);
+    }
+}
+
+void MainWindow::connectionStatus(QString string) {
+    ui->statusbar->showMessage(string);
 }

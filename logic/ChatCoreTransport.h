@@ -4,6 +4,8 @@
 #include <QVariantMap>
 #include "Utils.h"
 
+DEF_PTR_STRUCT(BufferLine)
+
 struct BufferLine
 {
 	QString network;
@@ -18,11 +20,13 @@ class ChatCoreTransport : public QObject
 	Q_OBJECT
 
 signals:
-	void lineArrived(BufferLine line);
+
+    void lineArrived(BufferLinePtr line);
 	void rawOutgoing(QString data);
 
 public slots:
 	virtual void rawLine(QString line) = 0;
-	virtual void send(BufferLine line) = 0;
+
+    virtual void send(BufferLinePtr line) = 0;
 private:
 };

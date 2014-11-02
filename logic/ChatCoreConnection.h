@@ -6,6 +6,8 @@
 #include "ChatCoreModel.h"
 #include "ChatCoreTransport.h"
 
+DEF_PTR(ChatCoreConnection)
+
 class ChatCoreConnection : public QThread
 {
     Q_OBJECT
@@ -14,11 +16,14 @@ public:
 
 	virtual void run();
 signals:
-	
+
+    void status(QString error);
 public slots:
 	void setTransport(ChatCoreTransportPtr transport) {
 		m_transport = transport;
 	}
+
+    void send(QString rawMsg);
 private:
 	std::shared_ptr<QTcpSocket> m_socket;
 	std::shared_ptr<QTextStream> m_stream;

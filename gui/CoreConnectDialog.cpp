@@ -23,3 +23,7 @@ void CoreConnectDialog::on_buttonBox_accepted()
     m_core = m_model->at(ui->coreSelect->currentIndex().row());
     QDialog::accept();
 }
+
+void CoreConnectDialog::on_buttonBox_rejected() {
+    QDialog::reject();
+}

@@ -163,17 +163,22 @@ set(SOURCE_FILES
     logic/ChatCoreModel.cpp
     logic/BufferModel.h
     logic/BufferModel.cpp
+    logic/BufferContentModel.h
+    logic/BufferContentModel.cpp
 
     gui/Platform.h
     gui/MainWindow.h
     gui/MainWindow.cpp
     gui/CoreConnectDialog.h
     gui/CoreConnectDialog.cpp
+    gui/JoinDialog.h
+    gui/JoinDialog.cpp
 )
 
 set(SOURCE_UIS
     gui/MainWindow.ui
     gui/CoreConnectDialog.ui
+    gui/JoinDialog.ui
 )
 
 set(SOURCE_QRCS

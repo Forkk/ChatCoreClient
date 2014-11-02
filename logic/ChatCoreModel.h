@@ -28,6 +28,9 @@ public:
 
 	const ChatCorePtr at(int index) const
 	{
+        if (index < 0 || index >= count()) {
+            index = 0;
+        }
 		return m_list[index];
 	}
 
