@@ -1,0 +1,26 @@
+#include "BuildConfig.h"
+
+Config BuildConfig;
+
+Config::Config()
+{
+	// Version information
+	VERSION_MAJOR =	@QCCC_VERSION_MAJOR@;
+	VERSION_MINOR = @QCCC_VERSION_MINOR@;
+	VERSION_HOTFIX = @QCCC_VERSION_HOTFIX@;
+	VERSION_BUILD = @QCCC_VERSION_BUILD@;
+
+	FULL_VERSION_STR = "@QCCC_VERSION_MAJOR@.@QCCC_VERSION_MINOR@.@QCCC_VERSION_BUILD@";
+
+	GIT_COMMIT = "@QCCC_GIT_COMMIT@";
+	VERSION_STR = "@QCCC_VERSION_STRING@";
+}
+
+QString Config::printableVersionString() const
+{
+	QString vstr = QString("%1.%2").arg(QString::number(VERSION_MAJOR),	QString::number(VERSION_MINOR));
+
+	if (VERSION_HOTFIX > 0) vstr += "." + QString::number(VERSION_HOTFIX);
+
+	return vstr;
+}
