@@ -157,10 +157,12 @@ set(SOURCE_FILES
     logic/ChatCoreTransport.cpp
 
     logic/JsonTransport.h
-    logic/JsonTransport.h
+    logic/JsonTransport.cpp
     
     logic/ChatCoreModel.h
     logic/ChatCoreModel.cpp
+    logic/BufferModel.h
+    logic/BufferModel.cpp
 
     gui/Platform.h
     gui/MainWindow.h
