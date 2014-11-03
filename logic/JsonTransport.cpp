@@ -16,7 +16,7 @@ void JsonTransport::rawLine(QString raw) {
 void JsonTransport::send(BufferLinePtr line) {
     QJsonObject object = QJsonObject::fromVariantMap(line->data);
     QJsonDocument doc(object);
-    QCCC->getConnection().send(doc.toJson(QJsonDocument::Compact));
+    QCCC->getConnection()->send(doc.toJson(QJsonDocument::Compact));
 }
 
-#include "JsonTransport.moc"
+ "JsonTransport.moc"

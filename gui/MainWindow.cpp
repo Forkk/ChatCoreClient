@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent), ui(new Ui::MainWindow), m_bufferModel(new BufferModel()) {
     ui->setupUi(this);
     ui->bufferList->setModel(m_bufferModel.get());
+    ui->buffer->setModel(m_contentModel.get());
     connect(QCCC, SIGNAL(connectionStatus(QString)), this, SLOT(connectionStatus(QString)));
 }
 

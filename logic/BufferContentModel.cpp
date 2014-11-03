@@ -49,9 +49,9 @@ void BufferContentModel::init(BufferPtr buffer) {
 }
 
 void BufferContentModel::newData(BufferLinePtr line) {
-    beginResetModel();
+    beginInsertRows(QModelIndex(), count(), count());
 
     line->buffer->lines.append(line);
 
-    endResetModel();
+    endInsertRows();
 }

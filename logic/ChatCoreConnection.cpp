@@ -1,5 +1,5 @@
 #include "ChatCoreConnection.h"
-#include <iostream>
+#include <QTextCodec>
 
 ChatCoreConnection::ChatCoreConnection(ChatCorePtr core, QString username,
         QString password, QObject *parent)
@@ -9,6 +9,7 @@ ChatCoreConnection::ChatCoreConnection(ChatCorePtr core, QString username,
 void ChatCoreConnection::run() {
     m_socket = std::shared_ptr<QTcpSocket>(new QTcpSocket());
     m_stream = std::shared_ptr<QTextStream>(new QTextStream(m_socket.get()));
+    m_stream->setCodec(QTextCodec::codecForName("unicode"));
     m_socket->connectToHost(m_core->address, m_core->port);
     emit status("Connecting to core...");
     if (m_socket->waitForConnected()) {
@@ -25,6 +26,5 @@ void ChatCoreConnection::run() {
 }
 
 void ChatCoreConnection::send(QString rawMsg) {
-    std::cout << rawMsg.toStdString();
-    *m_stream.get() << rawMsg << "\n";
+    *m_stream.get() << rawMsg << endl;
 }
