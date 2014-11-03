@@ -7,7 +7,7 @@
 #include "logic/BufferContentModel.h"
 
 MainWindow::MainWindow(QWidget *parent)
-        : QMainWindow(parent), ui(new Ui::MainWindow), m_bufferModel(new BufferModel()) {
+        : QMainWindow(parent), ui(new Ui::MainWindow), m_bufferModel(new BufferModel), m_contentModel(new BufferContentModel) {
     ui->setupUi(this);
     ui->bufferList->setModel(m_bufferModel.get());
     ui->buffer->setModel(m_contentModel.get());
@@ -75,4 +75,18 @@ void MainWindow::on_actionJoin_Channel_triggered() {
 
 void MainWindow::connectionStatus(QString string) {
     ui->statusbar->showMessage(string);
+}
+
+void MainWindow::on_bufferList_clicked(const QModelIndex &index)
+{
+    QStandardItem* item = m_bufferModel->itemFromIndex(index);
+    if(item->parent() == m_bufferModel->invisibleRootItem()) {
+        NetworkPtr ptr = QCCC->networks[item->text()];
+        m_contentModel->init(ptr->buffers["*"]);
+    } else {
+        QStandardItem* network = item->parent();
+        NetworkPtr net = QCCC->networks[network->text()];
+        BufferPtr buf = net->buffers[item->text()];
+        m_contentModel->init(buf);
+    }
 }

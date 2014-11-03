@@ -20,4 +20,4 @@ void BufferModel::add(QString network, QString buffer) {
     }
 }
 
- "BufferModel.moc"
+ #include "BufferModel.moc"

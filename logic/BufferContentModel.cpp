@@ -42,6 +42,7 @@ int BufferContentModel::columnCount(const QModelIndex &parent) const {
 void BufferContentModel::init(BufferPtr buffer) {
     beginResetModel();
 
+    this->hasBuf = true;
     this->buffer = buffer->name;
     this->network = buffer->network->name;
 

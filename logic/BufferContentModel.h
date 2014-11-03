@@ -15,15 +15,15 @@ public:
     explicit BufferContentModel(QObject *parent = 0);
 
     BufferLinePtr at(int index) {
-        return getBuf()->lines[index];
+        return hasBuf ? getBuf()->lines[index] : BufferLinePtr();
     }
 
     const BufferLinePtr at(int index) const {
-        return getBuf()->lines[index];
+        return hasBuf ? getBuf()->lines[index] : BufferLinePtr();
     }
 
     int count() const {
-        return getBuf()->lines.count();
+        return hasBuf ? getBuf()->lines.count() : 0;
     }
 
     virtual QVariant data(const QModelIndex &index, int role) const;
@@ -61,4 +61,5 @@ private:
     BufferPtr const getBuf() const {
         return QCCC->networks[network]->buffers[buffer];
     }
+    bool hasBuf = false;
 };

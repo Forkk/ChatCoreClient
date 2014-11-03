@@ -31,6 +31,8 @@ private slots:
 
     void on_actionJoin_Channel_triggered();
 
+    void on_bufferList_clicked(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
 
