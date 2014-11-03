@@ -18,5 +18,3 @@ void JsonTransport::send(BufferLinePtr line) {
     QJsonDocument doc(object);
     QCCC->getConnection()->send(doc.toJson(QJsonDocument::Compact));
 }
-
- #include "JsonTransport.moc"

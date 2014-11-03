@@ -19,5 +19,3 @@ void BufferModel::add(QString network, QString buffer) {
         net->buffers[buffer]->name = buffer;
     }
 }
-
- #include "BufferModel.moc"

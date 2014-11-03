@@ -6,90 +6,61 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>913</width>
+    <height>614</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTreeView" name="bufferList">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>181</width>
-      <height>551</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="message">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>530</y>
-      <width>431</width>
-      <height>23</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="send">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>530</y>
-      <width>51</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Send</string>
-    </property>
-   </widget>
-   <widget class="QTableView" name="buffer">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>40</y>
-      <width>481</width>
-      <height>491</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QTreeView" name="users">
-    <property name="geometry">
-     <rect>
-      <x>660</x>
-      <y>0</y>
-      <width>141</width>
-      <height>551</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QTextBrowser" name="topic">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>0</y>
-      <width>481</width>
-      <height>41</height>
-     </rect>
-    </property>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0" colspan="2">
+     <widget class="QTableView" name="buffer"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLineEdit" name="message"/>
+    </item>
+    <item row="2" column="1">
+     <widget class="QPushButton" name="send">
+      <property name="text">
+       <string>Send</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="2">
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="topic">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>20</height>
+     <width>913</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuQChatCoreClient">
     <property name="title">
-     <string>&amp;QChatCoreClient</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="actionConnect_To_Core"/>
     <addaction name="actionJoin_Channel"/>
@@ -98,9 +69,39 @@
    <addaction name="menuQChatCoreClient"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="dockWidget">
+   <property name="windowTitle">
+    <string>Users</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QTreeView" name="users"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_2">
+   <property name="windowTitle">
+    <string>B&amp;uffers</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_4">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QTreeView" name="bufferList"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionConnect_To_Core">
    <property name="text">
-    <string>Connect To Core</string>
+    <string>&amp;Connect To Core</string>
    </property>
    <property name="toolTip">
     <string>Connect To Core</string>
@@ -108,7 +109,7 @@
   </action>
   <action name="actionJoin_Channel">
    <property name="text">
-    <string>Join Channel</string>
+    <string>&amp;Join Channel</string>
    </property>
    <property name="toolTip">
     <string>Join Channel</string>
@@ -116,7 +117,7 @@
   </action>
   <action name="actionPart_Channel">
    <property name="text">
-    <string>Part Channel</string>
+    <string>&amp;Part Channel</string>
    </property>
    <property name="toolTip">
     <string>Part from Current Channel</string>
