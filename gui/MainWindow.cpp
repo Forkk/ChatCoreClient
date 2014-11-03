@@ -3,6 +3,8 @@
 #include "ui_MainWindow.h"
 #include "CoreConnectDialog.h"
 #include "JoinDialog.h"
+#include "logic/ChatCoreTransport.h"
+#include "logic/BufferContentModel.h"
 
 MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent), ui(new Ui::MainWindow), m_bufferModel(new BufferModel()) {
@@ -25,8 +27,8 @@ void MainWindow::on_message_returnPressed() {
 
 void MainWindow::send(QString text) {
     BufferLinePtr line(new BufferLine);
-    line->network = m_contentModel->getNetwork();
-    line->buffer = m_contentModel->getBuffer();
+    NetworkPtr net = QCCC->networks[m_contentModel->getNetwork()];
+    line->buffer = net->buffers[m_contentModel->getBuffer()];
     line->data = QVariantMap();
     line->data.insert("command", "send-msg");
     line->data.insert("network", m_contentModel->getNetwork());
@@ -56,22 +58,17 @@ void MainWindow::on_actionConnect_To_Core_triggered() {
 void MainWindow::on_actionJoin_Channel_triggered() {
     JoinDialog dialog(this);
     if (dialog.exec()) {
+        m_bufferModel->add(dialog.network(), dialog.channel());
+
         BufferLinePtr line(new BufferLine);
-        line->network = dialog.network();
-        line->buffer = dialog.channel();
+        NetworkPtr net = QCCC->networks[dialog.network()];
+        line->buffer = net->buffers[dialog.channel()];
         line->data = QVariantMap();
         line->data.insert("command", "join-chan");
         line->data.insert("network", dialog.network());
         line->data.insert("channel", dialog.channel());
 
         QCCC->getTransport()->send(line);
-
-        Buffer *buf = new Buffer;
-        buf->network = new Network;
-        buf->network->name = dialog.network();
-        buf->name = dialog.channel();
-
-        m_bufferModel->add(buf);
     }
 }
 

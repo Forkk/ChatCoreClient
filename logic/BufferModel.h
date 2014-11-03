@@ -4,22 +4,7 @@
 #include <QString>
 #include <QMap>
 #include <Utils.h>
-
-class Network;
-
-class Buffer {
-public:
-    virtual ~Buffer() {
-    };
-    Network *network;
-    QString name;
-    int row = -1;
-};
-
-class Network : public Buffer {
-public:
-    int nBufs;
-};
+#include <QCCC.h>
 
 DEF_PTR(BufferModel)
 
@@ -29,6 +14,8 @@ Q_OBJECT
 public:
     virtual ~BufferModel();
 
+    NetworkPtr forName(QString name);
+
     virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
@@ -37,7 +24,7 @@ public:
 
     virtual QModelIndex parent(const QModelIndex &child) const;
 
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual int rowCount(const QModelIndex &index = QModelIndex()) const;
 
     virtual Qt::ItemFlags flags(const QModelIndex &index) const override {
         if (!index.isValid())
@@ -48,13 +35,8 @@ public:
 
 public slots:
 
-    void add(Buffer *buffer);
+    void add(QString network, QString buffer);
 
 private:
-    QList<Buffer *> m_data;
     int currentNetworkIndex;
-
-    Network *getNetwork(int row) const;
-
-    Buffer *getBuffer(Network *pNetwork, int row) const;
 };

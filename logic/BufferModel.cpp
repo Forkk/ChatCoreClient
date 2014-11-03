@@ -2,14 +2,11 @@
 #include <QTreeView>
 
 BufferModel::~BufferModel() {
-    QMap<QString, Network *> networks;
-    for (Buffer *buf : m_data) {
-        networks[buf->network->name] = buf->network;
-        delete buf;
-    }
-    for (Network *network : networks.values()) {
-        delete network;
-    }
+
+}
+
+NetworkPtr BufferModel::forName(QString name) {
+    return QCCC->networks[name];
 }
 
 int BufferModel::columnCount(const QModelIndex &parent) const {
@@ -17,35 +14,27 @@ int BufferModel::columnCount(const QModelIndex &parent) const {
 }
 
 QVariant BufferModel::data(const QModelIndex &index, int role) const {
-    if (!index.isValid())
+    if (!index.isValid()) {
         return QVariant();
-
+    }
     if (role != Qt::DisplayRole) {
         return QVariant();
     }
-
-    Buffer *buf = static_cast<Buffer *>(index.internalPointer());
-    Network *net = dynamic_cast<Network *>(buf);
-    if (net) {
-        return net->name;
-    }
-    if (buf) {
-        return buf->name;
+    BaseBufferPtr ptr = BaseBufferPtr(static_cast<BaseBuffer *>(index.internalPointer()));
+    if (ptr) {
+        return ptr->name;
     }
     return QVariant();
 }
 
 QModelIndex BufferModel::index(int row, int column, const QModelIndex &parent) const {
-    if (!hasIndex(row, column, parent))
-        return QModelIndex();
-
     if (!parent.isValid()) {
-        return createIndex(row, column, getNetwork(row));
+        return createIndex(row, column, QCCC->networks[QCCC->networks.keys()[row]].get());
     }
-
-    Network *net = dynamic_cast<Network *>(static_cast<Buffer *>(parent.internalPointer()));
-    if (net) {
-        return createIndex(row, column, getBuffer(net, row));
+    BaseBufferPtr ptr = BaseBufferPtr(static_cast<BaseBuffer *>(parent.internalPointer()));
+    NetworkPtr networkPtr = std::dynamic_pointer_cast<Network>(ptr);
+    if (networkPtr) {
+        return createIndex(row, column, networkPtr->buffers[networkPtr->buffers.keys()[row]].get());
     }
     return QModelIndex();
 }
@@ -55,58 +44,42 @@ QModelIndex BufferModel::parent(const QModelIndex &index) const {
         return QModelIndex();
     }
 
-    Buffer *buf = static_cast<Buffer *>(index.internalPointer());
-    if (buf) {
-        Network *n = buf->network;
-        return createIndex(n->row, 0, n);
+    BaseBufferPtr ptr = BaseBufferPtr(static_cast<BaseBuffer *>(index.internalPointer()));
+    NetworkPtr networkPtr = std::dynamic_pointer_cast<Network>(ptr);
+    if (networkPtr) {
+        return QModelIndex();
     }
-    return QModelIndex();
+    BufferPtr bufferPtr = std::dynamic_pointer_cast<Buffer>(ptr);
+    if (!bufferPtr) {
+        return QModelIndex();
+    }
+    networkPtr = bufferPtr->network;
+    return createIndex(QCCC->networks.keys().indexOf(networkPtr->name, 0), 0, networkPtr.get());
 }
 
-int BufferModel::rowCount(const QModelIndex &parent) const {
-    Network *item;
-    if (parent.column() > 0)
-        return 0;
-    if (!parent.isValid()) {
-        return currentNetworkIndex;
+int BufferModel::rowCount(const QModelIndex &index) const {
+    if (!index.isValid()) {
+        return QCCC->networks.count();
     }
-    item = dynamic_cast<Network *>(static_cast<Buffer *>(parent.internalPointer()));
-    if (item) {
-        return item->nBufs;
+    NetworkPtr ptr = QCCC->networks[QCCC->networks.keys()[index.row()]];
+    if (ptr) {
+        return ptr->buffers.count();
     }
     return 0;
 }
 
-Network *BufferModel::getNetwork(int row) const {
-    QMap<int, Network *> networks;
-    for (Buffer *buf : m_data) {
-        Network *net = buf->network;
-        networks[net->row] = net;
-    }
-    return networks[row];
-}
-
-Buffer *BufferModel::getBuffer(Network *pNetwork, int row) const {
-    QMap<int, Buffer *> buffers;
-    for (Buffer *buf : m_data) {
-        Network *net = buf->network;
-        if (net->name == pNetwork->name) {
-            buffers[buf->row] = buf;
-        }
-    }
-    return buffers[row];
-}
-
-void BufferModel::add(Buffer *buffer) {
+void BufferModel::add(QString network, QString buffer) {
     beginResetModel();
-
-    m_data.append(buffer);
-    buffer->row = buffer->network->nBufs++;
-    if (buffer->network->row != -1) {
-        buffer->network->row = currentNetworkIndex++;
+    if (!QCCC->networks.contains(network)) {
+        QCCC->networks[network] = NetworkPtr(new Network);
+        QCCC->networks[network]->name = network;
     }
-
+    NetworkPtr net = QCCC->networks[network];
+    if (!net->buffers.contains(buffer)) {
+        net->buffers[buffer] = BufferPtr(new Buffer);
+        net->buffers[buffer]->name = buffer;
+    }
     endResetModel();
 }
 
- "BufferModel.moc"
+#include "BufferModel.moc"

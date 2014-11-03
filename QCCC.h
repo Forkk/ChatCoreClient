@@ -3,15 +3,49 @@
 #include <QApplication>
 #include <QTranslator>
 #include <memory>
-#include "logic/ChatCoreTransport.h"
-#include "logic/ChatCoreModel.h"
-#include "logic/ChatCoreConnection.h"
-#include "logic/BufferContentModel.h"
+#include "Utils.h"
 
 #ifdef QCCC
 #undef QCCC
 #endif
 #define QCCC (static_cast<QChatCoreClient *>(QCoreApplication::instance()))
+
+DEF_PTR(BufferLine)
+DEF_PTR(Network)
+DEF_PTR(BaseBuffer)
+DEF_PTR(Buffer)
+DEF_PTR_STRUCT(ChatCore)
+DEF_PTR(BufferContentModel)
+DEF_PTR(BufferModel)
+DEF_PTR(ChatCoreConnection)
+DEF_PTR(ChatCoreTransport)
+
+class BaseBuffer {
+public:
+    QString name;
+protected:
+    virtual void hack() {
+    };
+};
+
+class BufferLine {
+public:
+    BufferPtr buffer;
+    QVariantMap data;
+};
+
+class Buffer : public BaseBuffer {
+public:
+    QList<BufferLinePtr> lines;
+    NetworkPtr network;
+};
+
+
+class Network : public BaseBuffer {
+public:
+    QString name;
+    QMap<QString, BufferPtr> buffers;
+};
 
 class QChatCoreClient : public QApplication {
 Q_OBJECT
@@ -67,6 +101,8 @@ public:
     const ChatCoreTransportPtr &getTransport() const {
         return m_transport;
     }
+
+    QMap<QString, NetworkPtr> networks;
 
 signals:
 

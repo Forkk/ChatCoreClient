@@ -4,6 +4,9 @@
 
 class JsonTransport : public ChatCoreTransport {
 Q_OBJECT
+public:
+    JsonTransport(BufferModelPtr model) : ChatCoreTransport(model) {
+    }
 public slots:
 
     virtual void rawLine(QString line);

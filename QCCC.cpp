@@ -6,6 +6,8 @@
 #include <iostream>
 #include <logic/JsonTransport.h>
 #include "BuildConfig.h"
+#include "logic/ChatCoreConnection.h"
+#include "logic/BufferContentModel.h"
 
 using namespace Util::Commandline;
 
@@ -149,11 +151,9 @@ void QChatCoreClient::initTranslations() {
 
 void QChatCoreClient::connectToCore(ChatCorePtr core, QString username, QString password, BufferContentModelPtr content, BufferModelPtr buffers) {
     m_connection.reset(new ChatCoreConnection(core, username, password, this));
-    m_transport.reset(new JsonTransport());
+    m_transport.reset(new JsonTransport(buffers));
     m_connection->setTransport(m_transport);
-    connect(m_transport.get(), SIGNAL(lineArrived(BufferLinePtr)), content.get(), SLOT(newData(BufferLinePtr)), Qt::DirectConnection);
-    connect(content.get(), SIGNAL(newBuf(Buffer * )), buffers.get(), SLOT(add(Buffer * )), Qt::DirectConnection);
+    connect(m_transport.get(), SIGNAL(lineArrived(BufferLinePtr)), content.get(), SLOT(newData(BufferLinePtr)));
     connect(m_connection.get(), SIGNAL(status(QString)), this, SIGNAL(connectionStatus(QString)));
-    connect(m_transport.get(), SIGNAL(rawOutgoing(QString)), m_connection.get(), SLOT(send(QString)), Qt::DirectConnection);
     m_connection->start();
 }
